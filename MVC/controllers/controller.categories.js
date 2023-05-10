@@ -1,4 +1,5 @@
-const { selectCategories} = require("../models/model.categories")
+const { selectCategories } = require("../models/model.categories")
+
 
 exports.getCategories = (request, response, next) => {
     selectCategories().then((categories) => {
@@ -6,7 +7,8 @@ exports.getCategories = (request, response, next) => {
         //next()
         
     })
-        .catch((err) => {
-        next(err)
+    .catch((err) => {
+    next(err)
     });  
 }
+

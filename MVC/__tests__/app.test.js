@@ -41,16 +41,28 @@ describe('GET /api/categories', () => {
 
 describe('GET /api/reviews/:review_id', () => {
     it("200: returns an object with 'review' key and value of object with required keys", () => {
-        
+        const expectedReviewId = 1
+        return request(app).get(`/api/reviews/${expectedReviewId}`).expect(200).then((response) => { 
+            const review = response.body.review
+            expect(typeof response.body).toBe('object')
+            expect(review).toHaveProperty('title')
+            expect(review).toHaveProperty('votes')
+        })
     })
     it("400: returns 'Bad request. Invalid ID.' when id is in the wrong data type", () => {
-        
+        return request(app).get(`/api/reviews/invalid_id`).expect(400).then((response) => {
+            expect(response.body.message).toBe('Bad request. Invalid ID')
+        })
     })
-    it("404: returns 'ID does not exist' when id doesnt exist", () => {
-        
+    it("404: returns 'Review ID not found' when id doesnt exist", () => {
+        return request(app).get('/api/reviews/999').expect(404).then((response) => {
+            expect(response.body.message).toBe("Review ID not found")
+        })
     })
     it("404: returns page not found when path is spelt wrong", () => {
-        
+        return request(app).get('/api/wrong-path').expect(404).then((response) => {
+            expect(response.body.message).toBe("Page not found")
+        })
     })
 })
 
