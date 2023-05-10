@@ -4,6 +4,8 @@ const app = require("../../app")
 const connection = require("../../db/connection")
 const testData = require("../../db/data/test-data")
 const seed = require("../../db/seeds/seed")
+const fs = require('fs').promises;
+const path = require('path');
 
 afterAll(() => {
     connection.end()
@@ -12,6 +14,7 @@ afterAll(() => {
 beforeEach(() => {
     return seed(testData)
 })
+
 describe('GET /api/categories', () => {
     it('200: returns an array of category objects', () => {
         return request(app)
@@ -38,3 +41,14 @@ describe('GET /api/categories', () => {
           
     })
 })
+
+describe('GET /api', () => {
+    test('200: responds with a description of all the available endpoints', async () => {
+        const expectedApiStructure = JSON.parse(
+            await fs.readFile('endpoints.json'), 'utf8');
+      const { body } = await request(app)
+        .get('/api')
+        .expect(200);
+      expect(body.api).toEqual(expectedApiStructure);
+    });
+  });

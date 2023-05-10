@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
-const {getCategories} = require('./MVC/controllers/controller.categories')
+const {getCategories, getApi} = require('./MVC/controllers/controller.categories')
 
 app.get('/api/categories', getCategories)
+
+app.get("/api", getApi)
 
 app.all("*", (req, res) => {
     res.status(404).send({message: "Page not found"})
@@ -21,9 +23,5 @@ app.use((err, req, res, next) => {
     res.status(500).send({ message: 'Internal Server Error'});
 })
 
-  
-// app.listen(process.env.PORT || PORT, () => {
-//     console.log(`Server listening on port ${PORT}`)
-// }) extract
 
 module.exports = app
