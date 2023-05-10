@@ -1,13 +1,14 @@
 const { selectCategories } = require("../models/model.categories")
 const apiEndpoints = require("../../endpoints.json") 
 
+
 exports.getCategories = (request, response, next) => {
     selectCategories().then((categories) => {
         response.status(200).send(categories)
         //next()
     })
-        .catch((err) => {
-        next(err)
+    .catch((err) => {
+    next(err)
     });  
 }
 
