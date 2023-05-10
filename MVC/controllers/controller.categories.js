@@ -7,7 +7,6 @@ exports.getCategories = (request, response, next) => {
         
     })
         .catch((err) => {
-        console.log("Error in getCategories:", err)
         next(err)
     });  
 }

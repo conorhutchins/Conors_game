@@ -17,7 +17,7 @@ app.all("*", (req, res) => {
 // })
 
 app.use((err, req, res, next) => {
-    console.log("in the second error handler", err);
+    console.log("in the custom error handler", err);
     res.status(500).JSON.send({ message: 'Internal Server Error'});
 })
 
