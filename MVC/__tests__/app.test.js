@@ -38,3 +38,19 @@ describe('GET /api/categories', () => {
           
     })
 })
+
+describe('GET /api/reviews/:review_id', () => {
+    it("200: returns an object with 'review' key and value of object with required keys", () => {
+        
+    })
+    it("400: returns 'Bad request. Invalid ID.' when id is in the wrong data type", () => {
+        
+    })
+    it("404: returns 'ID does not exist' when id doesnt exist", () => {
+        
+    })
+    it("404: returns page not found when path is spelt wrong", () => {
+        
+    })
+})
+
