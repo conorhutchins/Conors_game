@@ -1,4 +1,5 @@
-const { selectCategories, fetchApi} = require("../models/model.categories")
+const { selectCategories } = require("../models/model.categories")
+const apiEndpoints = require("../../endpoints.json") 
 
 exports.getCategories = (request, response, next) => {
     selectCategories().then((categories) => {
@@ -11,9 +12,9 @@ exports.getCategories = (request, response, next) => {
 }
 
 exports.getApi = (request, response, next) => {
-    fetchApi()
+   return Promise.resolve(apiEndpoints)
         .then((api) => {
-        response.status(200).send({ api})
+        response.status(200).send({ api })
         })
     .catch(next)
 }
