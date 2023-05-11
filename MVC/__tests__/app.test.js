@@ -1,11 +1,10 @@
 const request = require("supertest")
-const { response } = require("../../app")
 const app = require("../../app")
 const connection = require("../../db/connection")
 const testData = require("../../db/data/test-data")
 const seed = require("../../db/seeds/seed")
 const fs = require('fs').promises;
-const path = require('path');
+const sorted = require("jest-sorted")
 
 afterAll(() => {
     connection.end()
@@ -51,7 +50,8 @@ describe('GET /api', () => {
         .expect(200);
       expect(body.api).toEqual(expectedApiStructure);
     });
-  });
+})
+  
 describe('GET /api/reviews/:review_id', () => {
     it("200: returns an object with 'review' key and value of object with required keys", () => {
         const expectedReviewId = 1
@@ -79,14 +79,41 @@ describe('GET /api/reviews/:review_id', () => {
     })
 })
 
-
-describe('GET /api', () => {
-    test('200: responds with a description of all the available endpoints', async () => {
-        const expectedApiStructure = JSON.parse(
-            await fs.readFile('endpoints.json'), 'utf8');
-      const { body } = await request(app)
-        .get('/api')
-        .expect(200);
-      expect(body.api).toEqual(expectedApiStructure);
+describe('GET /api/reviews', () => {
+    it("200: returns a reviews array with review objects inside, each object will have the required keys", () => {
+            return request(app)
+                .get('/api/reviews')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body.reviews)).toBe(true);
+                    body.reviews.forEach(review => {
+                        expect(review).toHaveProperty('owner');
+                        expect(review).toHaveProperty('title');
+                        expect(review).toHaveProperty('review_id');
+                        expect(review).toHaveProperty('category');
+                        expect(review).toHaveProperty('review_img_url');
+                        expect(review).toHaveProperty('created_at');
+                        expect(review).toHaveProperty('votes');
+                        expect(review).toHaveProperty('designer');
+                        expect(review).toHaveProperty('comment_count');
+                        expect(review).not.toHaveProperty('review_body');
+                    });
+                });
+        });
+          
+          
+          
+          
+     
+it("200: returns an array of objects sorted by date and defaults to sorting by descending", () => {
+    return request(app)
+    .get('/api/reviews?sort_by=created_at')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.reviews).toBeSortedBy('created_at', { descending: true });
     });
-  });
+});
+
+
+
+});

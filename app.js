@@ -1,27 +1,27 @@
 const express = require('express')
 const app = express()
 const {getCategories, getApi} = require('./MVC/controllers/controller.categories')
-const { getReview } = require('./MVC/controllers/controller.reviews')
+const { getReview, getAllReviews } = require('./MVC/controllers/controller.reviews')
 
 app.get('/api/categories', getCategories)
 
 app.get("/api", getApi)
 
-app.get('/api/categories', getCategories)
-
 app.get('/api/reviews/:review_id', getReview)
+
+app.get('/api/reviews', getAllReviews)
 
 app.all("*", (req, res) => {
     res.status(404).send({message: "Page not found"})
 })
 
-// app.use((err, req, res, next) => {
-//     if (err.status && err.message) {
-//         res.status(err.status).send({message: err.message})
-//     } else {
-//         next (err)
-//     }
-// })
+app.use((err, req, res, next) => {
+    if (err.status && err.message) {
+        res.status(err.status).send({message: err.message})
+    } else {
+        next (err)
+    }
+})
 
 app.use((err, req, res, next) => {
     console.log("in the custom error handler", err);

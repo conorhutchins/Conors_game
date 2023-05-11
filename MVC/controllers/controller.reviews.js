@@ -1,4 +1,4 @@
-const { selectReview } = require("../models/model.reviews");
+const { selectReview, selectAllReviews } = require("../models/model.reviews");
 
 exports.getReview = (request, response, next) => {
   const { review_id } = request.params;
@@ -20,3 +20,10 @@ exports.getReview = (request, response, next) => {
       }
     });
 };
+exports.getAllReviews = (request, response, next) => {
+  selectAllReviews(request.query)
+    .then(reviews => {
+    response.status(200).send({ reviews })
+    })
+  .catch(next)
+}
