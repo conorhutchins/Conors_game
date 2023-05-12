@@ -22,11 +22,8 @@ exports.getCommentsByReviewId = (req, res, next) => {
 
 exports.postComment = (req, res, next) => {
   const { review_id } = req.params;
-  console.log(review_id, "<-- this is the review_id");
   const { author, body, votes } = req.body;
-  console.log(author, body, votes, "<--- this is the author, body, and votes");
-  
- 
+
   
   const commentData = {
     review_id: Number(review_id),
@@ -37,7 +34,6 @@ exports.postComment = (req, res, next) => {
 console.log(commentData, "<-- this is commentData");
   insertComment(commentData)
     .then((comment) => {
-      console.log(comment, "<-- this is the comment from the model");
       res.status(201).send({ comment });
     })
     .catch(next);

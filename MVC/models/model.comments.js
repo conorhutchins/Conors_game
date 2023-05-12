@@ -15,11 +15,8 @@ exports.selectCommentsUsingReviewId = (parsedReviewId) => {
     });
 };
 exports.insertComment = (commentData) => {
-  console.log(commentData, "<--- this is whats coming into the model");
   const { review_id, author, body, votes } = commentData;
-  console.log(review_id);
-  console.log(author)
-  console.log(votes);
+
 
   return db
     .query(
@@ -27,11 +24,6 @@ exports.insertComment = (commentData) => {
       [review_id, author, body, votes]
     )
     .then((result) => {
-      console.log(result, "<--- this is the result from the query");
-      console.log(result.rows, "<--- this is the result rows from the query");
-      // if (result.rows.length === 0) {
-      //   throw { status:404, message: "Page not found"}
-      // }
       return result.rows[0];
     })
 };
