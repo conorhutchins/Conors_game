@@ -117,3 +117,62 @@ it("200: returns an array of objects sorted by date and defaults to sorting by d
 
 
 });
+
+describe('POST /api/reviews/:review_id/comments', () => {
+    it('201: responds with the posted comment', () => {
+        const commentData = {
+            author: 'bainesface',
+            body: 'lets test',
+            votes: 1
+        };
+          
+        return request(app)
+            .post(`/api/reviews/${1}/comments`)
+            .send(commentData)
+            .expect(201)
+            .then((response) => {
+                const { comment } = response.body;
+          
+                expect(comment).toHaveProperty('author', commentData.author);
+                expect(comment).toHaveProperty('body', commentData.body);
+                expect(comment).toHaveProperty('votes', commentData.votes);
+            });
+    });
+})
+    
+    // it.only('404: returns page not found when the review ID doesnt exist', () => {
+    //     const nonExistentId = 99999;
+    //     const commentData = {
+    //       author: 'average_joe',
+    //       body: 'test',
+    //     review_id: nonExistentId,
+    //       votes: 2
+
+    //     };
+    
+    //     return request(app)
+    //       .post(`/api/reviews/${nonExistentId}/comments`)
+    //       .send(commentData)
+    //       .expect(404)
+    //       .then((response) => {
+    //         expect(response.body.message).toBe('Page not found');
+    //       });
+    //   });
+    
+    //   it('404: returns page not found when the author doesnt exist', () => {
+    //     const nonExistentAuthor = 'nonsense';
+    //     const commentData = {
+    //       author: nonExistentAuthor,
+    //         body: 'test',
+    //       votes: 10
+    //     };
+    
+    //     return request(app)
+    //       .post(`/api/reviews/${22}/comments`)
+    //       .send(commentData)
+    //       .expect(404)
+    //       .then((response) => {
+    //         expect(response.body.message).toBe('Page not found');
+    //       });
+    //   });
+    // });
