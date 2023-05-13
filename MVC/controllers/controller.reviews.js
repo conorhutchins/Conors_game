@@ -1,4 +1,5 @@
-const { selectReview, selectAllReviews } = require("../models/model.reviews");
+const { selectReview, selectAllReviews, updateReview } = require("../models/model.reviews");
+const { checkIfReviewIdExists, getReview } = require("./utils");
 
 exports.getReview = (request, response, next) => {
   const { review_id } = request.params;
@@ -27,3 +28,39 @@ exports.getAllReviews = (request, response, next) => {
     })
   .catch(next)
 }
+
+exports.patchReview = (request, response, next) => {
+  const { reviewId } = request.params;
+  const parsedReviewId = Number(reviewId);
+  if (isNaN(parsedReviewId) || typeof parsedReviewId !== "number") {
+    return response.status(400).send({ message: "Bad request. Invalid ID" });
+  }
+
+checkIfReviewIdExists(parsedReviewId)
+.then(() => {
+const { inc_votes } = request.body;
+ if (!("inc_votes" in request.body)) {
+  return getReview(reviewId)
+}
+
+const parsedInc_votes = Number(inc_votes);
+
+if (isNaN(parsedInc_votes) || typeof parsedInc_votes !== "number") {
+  return response.status(400).send({ message: "Bad request. Invalid vote" });
+}
+   
+  return updateReview(reviewId, parsedInc_votes);
+})
+  
+.then((review) => {
+  if (!review) {
+  return response.status(404).send({ message: "Page not found" });
+}
+
+response.status(200).send({ review });
+})
+  
+.catch(next);
+};
+
+

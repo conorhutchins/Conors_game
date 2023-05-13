@@ -56,3 +56,18 @@ exports.selectAllReviews = ({ sort_by = "created_at", order = "desc", category }
       });
   }
 };
+exports.updateReview = (reviewId, inc_votes) => {
+  return db
+  .query('UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;', [inc_votes || 0, reviewId])
+    .then((result) => {
+      console.log(result, "<-- this is the result from the query");
+            if (result.rows.length === 0) {
+                const error = new Error('Review ID not found');
+                error.status = 404;
+                throw error;
+            } else {
+              console.log(result.rows[0], "<-- this is the result rows");
+                return result.rows[0];
+            }
+        });
+};

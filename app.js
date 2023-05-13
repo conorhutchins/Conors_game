@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 const {getCategories, getApi} = require('./MVC/controllers/controller.categories')
-const { getReview, getAllReviews } = require('./MVC/controllers/controller.reviews')
+const { getReview, getAllReviews, patchReview} = require('./MVC/controllers/controller.reviews')
+
+app.use(express.json())
 
 app.get('/api/categories', getCategories)
 
@@ -10,6 +12,9 @@ app.get("/api", getApi)
 app.get('/api/reviews/:review_id', getReview)
 
 app.get('/api/reviews', getAllReviews)
+
+app.patch(`/api/review/:reviewId`, patchReview)
+
 
 app.all("*", (req, res) => {
     res.status(404).send({message: "Page not found"})

@@ -117,3 +117,67 @@ it("200: returns an array of objects sorted by date and defaults to sorting by d
 
 
 });
+
+describe('PATCH /review/:reviewId', () => {
+    it('200: returns the updated review with increased votes', () => {
+        const inc_votes = 1
+        return request(app)
+            .patch("/api/review/1")
+            .send({ inc_votes })
+            .expect(200)
+            .then((response) => {
+            expect(response.body.review.votes).toBe(2)
+        })
+    });
+    it('200: returns the updated review with decreased votes', () => {
+        const inc_votes = -1;
+        return request(app)
+            .patch("/api/review/2")
+            .send({ inc_votes })
+            .expect(200)
+            .then((response) => {
+            console.log(response);
+            expect(response.body.review.votes).toBe(4)
+        })
+    });
+
+    it('200: returns the unaltered review if the inc_votes key doesnt exist', () => {
+        return request(app)
+            .patch("/api/review/1")
+            .send({})
+            .expect(200)
+            .then((response) => {
+            expect(response.body.review).toHaveProperty('votes')
+        })
+    })
+        
+    it('400: returns "Bad request. Invalid ID" when id is in the wrong data type', () => {
+        return request(app)
+            .patch('/api/review/invalid_id')
+            .expect(400)
+            .then((response) => {
+            expect(response.body.message).toBe("Bad request. Invalid ID")
+        })
+    });
+    
+    it('400: returns "Bad request. Invalid vote" when post body object is not a number', () => {
+        const inc_votes = "str";
+        return request(app)
+            .patch("/api/review/1")
+            .send({ inc_votes })
+            .expect(400)
+            .then((response) => {
+            expect(response.body.message).toBe("Bad request. Invalid vote")
+        })
+    });
+
+    it('404: returns "ID does not exist" when id doesnt exist', () => {
+        return request(app)
+            .patch('/api/review/999')
+            .expect(404)
+            .then((response) => {
+            expect(response.body.message).toBe("Review ID not found")
+        })
+    });
+    
+});
