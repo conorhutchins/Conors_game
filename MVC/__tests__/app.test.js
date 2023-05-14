@@ -5,6 +5,7 @@ const testData = require("../../db/data/test-data")
 const seed = require("../../db/seeds/seed")
 const fs = require('fs').promises;
 const sorted = require("jest-sorted")
+const { response } = require("../../app")
 
 afterAll(() => {
     connection.end()
@@ -119,60 +120,99 @@ it("200: returns an array of objects sorted by date and defaults to sorting by d
 });
 
 describe('POST /api/reviews/:review_id/comments', () => {
-    it('201: responds with the posted comment', () => {
-        const commentData = {
-            author: 'bainesface',
-            body: 'lets test',
-            votes: 1
-        };
+it('201: responds with the new posted comment', () => {
+const commentData =
+{
+author: 'bainesface',
+body: 'lets test',
+votes: 1
+};
           
-        return request(app)
-            .post(`/api/reviews/${1}/comments`)
-            .send(commentData)
-            .expect(201)
-            .then((response) => {
-                const { comment } = response.body;
-          
-                expect(comment).toHaveProperty('author', commentData.author);
-                expect(comment).toHaveProperty('body', commentData.body);
-                expect(comment).toHaveProperty('votes', commentData.votes);
-            });
-    });
-})
-    
-    // it.only('404: returns page not found when the review ID doesnt exist', () => {
-    //     const nonExistentId = 99999;
-    //     const commentData = {
-    //       author: 'average_joe',
-    //       body: 'test',
-    //     review_id: nonExistentId,
-    //       votes: 2
+return request(app)
+.post(`/api/reviews/1/comments`)
+.send(commentData)
+.expect(201)
+.then((response) =>
+{   
+const { comment } = response.body;
+expect(comment).toHaveProperty('author', commentData.author);
+expect(comment).toHaveProperty('body', commentData.body);
+expect(comment.body).toEqual('lets test')
+expect(comment).toHaveProperty('votes', commentData.votes);
+});
+});
 
-    //     };
-    
-    //     return request(app)
-    //       .post(`/api/reviews/${nonExistentId}/comments`)
-    //       .send(commentData)
-    //       .expect(404)
-    //       .then((response) => {
-    //         expect(response.body.message).toBe('Page not found');
-    //       });
-    //   });
-    
-    //   it('404: returns page not found when the author doesnt exist', () => {
-    //     const nonExistentAuthor = 'nonsense';
-    //     const commentData = {
-    //       author: nonExistentAuthor,
-    //         body: 'test',
-    //       votes: 10
-    //     };
-    
-    //     return request(app)
-    //       .post(`/api/reviews/${22}/comments`)
-    //       .send(commentData)
-    //       .expect(404)
-    //       .then((response) => {
-    //         expect(response.body.message).toBe('Page not found');
-    //       });
-    //   });
-    // });
+it('400: returns "Bad request. Incomplete post body" when the post body is incomplete', () => {
+    const commentData = {
+        author: 'bainesface'
+    }    
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+    expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe('Bad request. Incomplete post body')
+    })
+});
+
+it('400: returns "Bad request. Invalid ID" when the id is in the wrong data type', () => {
+    const commentData = {
+        author: 'bainesface',
+        body: 'lets test',
+        votes: 1
+    };
+      
+    return request(app)
+        .post(`/api/reviews/ThisShouldntBeAStr/comments`)
+        .send(commentData)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('Bad request. Invalid ID');
+        });
+});
+
+it('400: returns "Bad request. Invalid author" when the author is in the wrong data type', () => {
+    const commentData = {
+        author: 123,
+        body: 'lets test',
+        votes: 1
+    };
+      
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+        .expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe('Bad request. Invalid author');
+        });
+});
+it('404: returns page not found when the review ID doesnt exist', () => {
+    const commentData = {
+        author: 'bainesface',
+        body: 'test',
+        votes: 2
+    };
+    return request(app)
+        .post(`/api/reviews/9999/comments`)
+        .send(commentData)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('Review ID not found');
+        });
+});
+
+it('404: returns page not found when the author doesnt exist', () => {
+    const commentData = {
+        author: 'nonExistentPerson',
+        body: 'test',
+        votes: 10
+    };
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('User does not exist');
+        });
+});
+});

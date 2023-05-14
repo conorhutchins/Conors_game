@@ -15,15 +15,13 @@ exports.selectCommentsUsingReviewId = (parsedReviewId) => {
     });
 };
 exports.insertComment = (commentData) => {
-  const { review_id, author, body, votes } = commentData;
-
-
-  return db
-    .query(
-      'INSERT INTO comments (review_id, author, body, votes) VALUES ($1, $2, $3, $4) RETURNING *;',
-      [review_id, author, body, votes]
-    )
-    .then((result) => {
-      return result.rows[0];
-    })
+const { review_id, author, body, votes } = commentData;
+return db
+.query(
+'INSERT INTO comments (review_id, author, body, votes) VALUES ($1, $2, $3, $4) RETURNING *;',
+[review_id, author, body, votes]
+)
+.then((result) => {
+return result.rows[0];
+})
 };
