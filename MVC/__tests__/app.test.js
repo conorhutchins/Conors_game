@@ -98,12 +98,10 @@ describe('GET /api/reviews', () => {
                         expect(review).not.toHaveProperty('review_body');
                     });
                 });
-        });
+    });
+    
           
-          
-          
-          
-     
+             
 it("200: returns an array of objects sorted by date and defaults to sorting by descending", () => {
     return request(app)
     .get('/api/reviews?sort_by=created_at')
@@ -113,7 +111,15 @@ it("200: returns an array of objects sorted by date and defaults to sorting by d
     });
 });
 
-
+it('404: returns a page not found error when path is spelt wrong', () => {
+    return request(app)
+        .get("/api/invalidpath")
+        .expect(404)
+        .then((response) => {
+        expect(response.body.message).toEqual('Page not found' )
+        })
+      
+})
 
 });
 
