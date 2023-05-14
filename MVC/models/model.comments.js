@@ -26,3 +26,14 @@ return db
 return result.rows[0];
 })
 };
+
+exports.deleteCommentUsingCommentId = (commentId) => {
+    return db
+      .query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [commentId])
+        .then((result) => {
+        if (result.rowCount === 0) {
+        throw { status: 404, message: 'Comment not found' };
+        }
+      })
+};
+  

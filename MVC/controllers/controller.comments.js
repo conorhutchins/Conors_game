@@ -1,5 +1,5 @@
-const { selectCommentsUsingReviewId, insertComment } = require("../models/model.comments.js");
-const { checkIfReviewIdExists, checkIfUserExists } = require("./utils.js");
+const { selectCommentsUsingReviewId, insertComment, deleteCommentUsingCommentId } = require("../models/model.comments.js");
+const { checkIfReviewIdExists, checkIfUserExists, checkCommentIdExists } = require("./utils.js");
 
 exports.getCommentsByReviewId = (req, res, next) => {
 const { review_id } = req.params;
@@ -59,3 +59,22 @@ res.status(201).send({ comment });
 })
 .catch(next);
 };
+
+exports.deleteComment = (req, res, next) => {
+    const { comment_id } = req.params;   
+    const parsedCommentId = Number(comment_id);
+  
+    if (isNaN(parsedCommentId) || typeof parsedCommentId !== "number") {
+      return res.status(400).send({ message: "Bad request. Invalid comment ID" });
+    }
+  
+    checkCommentIdExists(parsedCommentId)
+      .then(() => {
+        deleteCommentUsingCommentId(parsedCommentId)
+          .then(() => {
+    res.status(204).send({ message: "" });
+          })
+      })
+      .catch(next)
+      };
+  

@@ -121,7 +121,7 @@ it('404: returns a page not found error when path is spelt wrong', () => {
       
 })
 
-});
+})
 
 describe('PATCH /review/:reviewId', () => {
     it('200: returns the updated review with increased votes', () => {
@@ -186,99 +186,132 @@ describe('PATCH /review/:reviewId', () => {
 })
     
 describe('POST /api/reviews/:review_id/comments', () => {
-it('201: responds with the new posted comment', () => {
-const commentData =
-{
-author: 'bainesface',
-body: 'lets test',
-votes: 1
-};
+    it('201: responds with the new posted comment', () => {
+        const commentData =
+        {
+            author: 'bainesface',
+            body: 'lets test',
+            votes: 1
+        };
           
-return request(app)
-.post(`/api/reviews/1/comments`)
-.send(commentData)
-.expect(201)
-.then((response) =>
-{   
-const { comment } = response.body;
-expect(comment).toHaveProperty('author', commentData.author);
-expect(comment).toHaveProperty('body', commentData.body);
-expect(comment.body).toEqual('lets test')
-expect(comment).toHaveProperty('votes', commentData.votes);
-});
-});
+        return request(app)
+            .post(`/api/reviews/1/comments`)
+            .send(commentData)
+            .expect(201)
+            .then((response) => {
+                const { comment } = response.body;
+                expect(comment).toHaveProperty('author', commentData.author);
+                expect(comment).toHaveProperty('body', commentData.body);
+                expect(comment.body).toEqual('lets test')
+                expect(comment).toHaveProperty('votes', commentData.votes);
+            });
+    });
 
-it('400: returns "Bad request. Incomplete post body" when the post body is incomplete', () => {
-    const commentData = {
-        author: 'bainesface'
-    }    
-    return request(app)
-        .post(`/api/reviews/1/comments`)
-        .send(commentData)
-    expect(400)
-        .then((response) => {
-        expect(response.body.message).toBe('Bad request. Incomplete post body')
-    })
-});
+    it('400: returns "Bad request. Incomplete post body" when the post body is incomplete', () => {
+        const commentData = {
+            author: 'bainesface'
+        }
+        return request(app)
+            .post(`/api/reviews/1/comments`)
+            .send(commentData)
+        expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Bad request. Incomplete post body')
+            })
+    });
 
-it('400: returns "Bad request. Invalid ID" when the id is in the wrong data type', () => {
-    const commentData = {
-        author: 'bainesface',
-        body: 'lets test',
-        votes: 1
-    };
+    it('400: returns "Bad request. Invalid ID" when the id is in the wrong data type', () => {
+        const commentData = {
+            author: 'bainesface',
+            body: 'lets test',
+            votes: 1
+        };
       
-    return request(app)
-        .post(`/api/reviews/ThisShouldntBeAStr/comments`)
-        .send(commentData)
-        .expect(400)
-        .then((response) => {
-            expect(response.body.message).toBe('Bad request. Invalid ID');
-        });
-});
+        return request(app)
+            .post(`/api/reviews/ThisShouldntBeAStr/comments`)
+            .send(commentData)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Bad request. Invalid ID');
+            });
+    });
 
-it('400: returns "Bad request. Invalid author" when the author is in the wrong data type', () => {
-    const commentData = {
-        author: 123,
-        body: 'lets test',
-        votes: 1
-    };
+    it('400: returns "Bad request. Invalid author" when the author is in the wrong data type', () => {
+        const commentData = {
+            author: 123,
+            body: 'lets test',
+            votes: 1
+        };
       
-    return request(app)
-        .post(`/api/reviews/1/comments`)
-        .send(commentData)
-        .expect(400)
-        .then((response) => {
-        expect(response.body.message).toBe('Bad request. Invalid author');
-        });
-});
-it('404: returns page not found when the review ID doesnt exist', () => {
-    const commentData = {
-        author: 'bainesface',
-        body: 'test',
-        votes: 2
-    };
-    return request(app)
-        .post(`/api/reviews/9999/comments`)
-        .send(commentData)
+        return request(app)
+            .post(`/api/reviews/1/comments`)
+            .send(commentData)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Bad request. Invalid author');
+            });
+    });
+    it('404: returns page not found when the review ID doesnt exist', () => {
+        const commentData = {
+            author: 'bainesface',
+            body: 'test',
+            votes: 2
+        };
+        return request(app)
+            .post(`/api/reviews/9999/comments`)
+            .send(commentData)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('Review ID not found');
+            });
+    });
+
+    it('404: returns page not found when the author doesnt exist', () => {
+        const commentData = {
+            author: 'nonExistentPerson',
+            body: 'test',
+            votes: 10
+        };
+        return request(app)
+            .post(`/api/reviews/1/comments`)
+            .send(commentData)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('User does not exist');
+            });
+    });
+})
+
+describe('DELETE /api/comments/:comment_id', () => {
+    it('204: deletes the comment for the specified comment_id', () => {
+      return request(app)
+        .delete(`/api/comments/1`)
+        .expect(204);
+    });
+  
+    it('400: returns "Bad request. Invalid comment ID" if comment_id is not a number', () => {
+        return request(app)
+          .delete(`/api/comments/invalid_id`)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.message).toBe("Bad request. Invalid comment ID");
+          });
+      });
+  
+    it('204: responds with status 204 and no content', () => {
+      return request(app)
+        .delete(`/api/comments/1`)
+        .expect(204)
+        .expect('');
+    });
+  
+    it('404: returns "Comment not found" when the comment ID does not exist', () => {
+    
+      return request(app)
+        .delete(`/api/comments/999`)
         .expect(404)
         .then((response) => {
-            expect(response.body.message).toBe('Review ID not found');
+          expect(response.body.message).toBe('Comment ID not found');
         });
-});
-
-it('404: returns page not found when the author doesnt exist', () => {
-    const commentData = {
-        author: 'nonExistentPerson',
-        body: 'test',
-        votes: 10
-    };
-    return request(app)
-        .post(`/api/reviews/1/comments`)
-        .send(commentData)
-        .expect(404)
-        .then((response) => {
-            expect(response.body.message).toBe('User does not exist');
-        });
-});
-});
+    });
+  })
