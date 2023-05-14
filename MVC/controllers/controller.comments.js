@@ -2,23 +2,23 @@ const { selectCommentsUsingReviewId, insertComment } = require("../models/model.
 const { checkIfReviewIdExists, checkIfUserExists } = require("./utils.js");
 
 exports.getCommentsByReviewId = (req, res, next) => {
-  const { review_id } = req.params;
-  const parsedReviewId = Number(review_id);
+const { review_id } = req.params;
+const parsedReviewId = Number(review_id);
   
-  selectCommentsUsingReviewId(parsedReviewId)
-    .then((comments) => {
-      if (comments.length === 0) {
-        return res.status(404).send({ message: 'No comments found for the given review_id' });
-      }
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      if (err.status && err.message) {
-        res.status(err.status).send({ message: err.message });
-      } else {
-        next(err);
-      }
-    });
+selectCommentsUsingReviewId(parsedReviewId)
+.then((comments) => {
+if (comments.length === 0) {
+return res.status(404).send({ message: 'No comments found for the given review_id' });
+}
+res.status(200).send({ comments });
+})
+.catch((err) => {
+if (err.status && err.message) {
+ return res.status(err.status).send({ message: err.message });
+} else {
+ next(err);
+}
+});
 };
 
 exports.postComment = (req, res, next) => {

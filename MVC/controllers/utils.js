@@ -1,23 +1,21 @@
 const db = require("./../../db/connection");
 
 exports.checkIfReviewIdExists = (review_id) => {
-    return db.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
-        .then((result) => {
-            console.log(review_id, "<-- this is it coming into util");
-            if (result.rows.length === 0 && review_id) {
-                return Promise.reject({ status: 404, message: "Review ID not found" });
-            }
-            return result;
-        });
+return db.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+.then((result) => {
+if (result.rows.length === 0 && review_id) {
+return Promise.reject({ status: 404, message: "Review ID not found" });
+}
+return result;
+ });
 };
 
 exports.getReview = (reviewId) => {
- return db.query(`SELECT * from reviews WHERE review_id = $1`, [reviewId])
+return db.query(`SELECT * from reviews WHERE review_id = $1`, [reviewId])
 .then((result) => {
-    return result.rows[0]})
+return result.rows[0]})
 }
     
-
 exports.checkIfUserExists = (username) => {
 return db.query(`SELECT * FROM users WHERE username = $1`, [username])
 .then((result) => {     

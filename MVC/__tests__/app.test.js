@@ -4,15 +4,13 @@ const connection = require("../../db/connection")
 const testData = require("../../db/data/test-data")
 const seed = require("../../db/seeds/seed")
 const fs = require('fs').promises;
-const sorted = require("jest-sorted")
-const { response } = require("../../app")
 
 afterAll(() => {
-    connection.end()
+connection.end()
 })
 
 beforeEach(() => {
-    return seed(testData)
+return seed(testData)
 })
 
 describe('GET /api/categories', () => {
