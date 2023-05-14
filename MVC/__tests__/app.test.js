@@ -135,8 +135,7 @@ describe('PATCH /review/:reviewId', () => {
             .send({ inc_votes })
             .expect(200)
             .then((response) => {
-                console.log(response);
-                expect(response.body.review.votes).toBe(4)
+            expect(response.body.review.votes).toBe(4)
             })
     });
 
