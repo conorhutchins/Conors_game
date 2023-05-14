@@ -129,14 +129,14 @@ describe('PATCH /review/:reviewId', () => {
             })
     });
     it('200: returns the updated review with decreased votes', () => {
-        const inc_votes = -1;
-        return request(app)
-            .patch("/api/review/2")
-            .send({ inc_votes })
-            .expect(200)
-            .then((response) => {
-            expect(response.body.review.votes).toBe(4)
-            })
+    const inc_votes = -1;
+    return request(app)
+   .patch("/api/review/2")
+    .send({ inc_votes })
+   .expect(200)
+   .then((response) => {
+    expect(response.body.review.votes).toBe(4)
+    })
     });
 
     it('200: returns the unaltered review if the inc_votes key doesnt exist', () => {
