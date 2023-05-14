@@ -5,6 +5,7 @@ const testData = require("../../db/data/test-data")
 const seed = require("../../db/seeds/seed")
 const fs = require('fs').promises;
 const sorted = require("jest-sorted")
+const { response } = require("../../app")
 
 afterAll(() => {
     connection.end()
@@ -126,8 +127,8 @@ describe('PATCH /review/:reviewId', () => {
             .send({ inc_votes })
             .expect(200)
             .then((response) => {
-            expect(response.body.review.votes).toBe(2)
-        })
+                expect(response.body.review.votes).toBe(2)
+            })
     });
     it('200: returns the updated review with decreased votes', () => {
         const inc_votes = -1;
@@ -136,9 +137,9 @@ describe('PATCH /review/:reviewId', () => {
             .send({ inc_votes })
             .expect(200)
             .then((response) => {
-            console.log(response);
-            expect(response.body.review.votes).toBe(4)
-        })
+                console.log(response);
+                expect(response.body.review.votes).toBe(4)
+            })
     });
 
     it('200: returns the unaltered review if the inc_votes key doesnt exist', () => {
@@ -147,8 +148,8 @@ describe('PATCH /review/:reviewId', () => {
             .send({})
             .expect(200)
             .then((response) => {
-            expect(response.body.review).toHaveProperty('votes')
-        })
+                expect(response.body.review).toHaveProperty('votes')
+            })
     })
         
     it('400: returns "Bad request. Invalid ID" when id is in the wrong data type', () => {
@@ -156,8 +157,8 @@ describe('PATCH /review/:reviewId', () => {
             .patch('/api/review/invalid_id')
             .expect(400)
             .then((response) => {
-            expect(response.body.message).toBe("Bad request. Invalid ID")
-        })
+                expect(response.body.message).toBe("Bad request. Invalid ID")
+            })
     });
     
     it('400: returns "Bad request. Invalid vote" when post body object is not a number', () => {
@@ -167,8 +168,8 @@ describe('PATCH /review/:reviewId', () => {
             .send({ inc_votes })
             .expect(400)
             .then((response) => {
-            expect(response.body.message).toBe("Bad request. Invalid vote")
-        })
+                expect(response.body.message).toBe("Bad request. Invalid vote")
+            })
     });
 
     it('404: returns "ID does not exist" when id doesnt exist', () => {
@@ -176,8 +177,105 @@ describe('PATCH /review/:reviewId', () => {
             .patch('/api/review/999')
             .expect(404)
             .then((response) => {
-            expect(response.body.message).toBe("Review ID not found")
-        })
+                expect(response.body.message).toBe("Review ID not found")
+            })
     });
+})
     
+describe('POST /api/reviews/:review_id/comments', () => {
+it('201: responds with the new posted comment', () => {
+const commentData =
+{
+author: 'bainesface',
+body: 'lets test',
+votes: 1
+};
+          
+return request(app)
+.post(`/api/reviews/1/comments`)
+.send(commentData)
+.expect(201)
+.then((response) =>
+{   
+const { comment } = response.body;
+expect(comment).toHaveProperty('author', commentData.author);
+expect(comment).toHaveProperty('body', commentData.body);
+expect(comment.body).toEqual('lets test')
+expect(comment).toHaveProperty('votes', commentData.votes);
+});
+});
+
+it('400: returns "Bad request. Incomplete post body" when the post body is incomplete', () => {
+    const commentData = {
+        author: 'bainesface'
+    }    
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+    expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe('Bad request. Incomplete post body')
+    })
+});
+
+it('400: returns "Bad request. Invalid ID" when the id is in the wrong data type', () => {
+    const commentData = {
+        author: 'bainesface',
+        body: 'lets test',
+        votes: 1
+    };
+      
+    return request(app)
+        .post(`/api/reviews/ThisShouldntBeAStr/comments`)
+        .send(commentData)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.message).toBe('Bad request. Invalid ID');
+        });
+});
+
+it('400: returns "Bad request. Invalid author" when the author is in the wrong data type', () => {
+    const commentData = {
+        author: 123,
+        body: 'lets test',
+        votes: 1
+    };
+      
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+        .expect(400)
+        .then((response) => {
+        expect(response.body.message).toBe('Bad request. Invalid author');
+        });
+});
+it('404: returns page not found when the review ID doesnt exist', () => {
+    const commentData = {
+        author: 'bainesface',
+        body: 'test',
+        votes: 2
+    };
+    return request(app)
+        .post(`/api/reviews/9999/comments`)
+        .send(commentData)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('Review ID not found');
+        });
+});
+
+it('404: returns page not found when the author doesnt exist', () => {
+    const commentData = {
+        author: 'nonExistentPerson',
+        body: 'test',
+        votes: 10
+    };
+    return request(app)
+        .post(`/api/reviews/1/comments`)
+        .send(commentData)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.message).toBe('User does not exist');
+        });
+});
 });
