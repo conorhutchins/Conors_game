@@ -39,7 +39,6 @@ describe('GET /api/categories', () => {
           
     })
 })
-
 describe('GET /api', () => {
     test('200: responds with a description of all the available endpoints', async () => {
         const expectedApiStructure = JSON.parse(
@@ -50,11 +49,11 @@ describe('GET /api', () => {
       expect(body.api).toEqual(expectedApiStructure);
     });
 })
+
   
 describe('GET /api/reviews/:review_id', () => {
     it("200: returns an object with 'review' key and value of object with required keys", () => {
-        const expectedReviewId = 1
-        return request(app).get(`/api/reviews/${expectedReviewId}`).expect(200).then((response) => { 
+        return request(app).get(`/api/reviews/1`).expect(200).then((response) => { 
             const review = response.body.review
             expect(typeof response.body).toBe('object')
             expect(review).toHaveProperty('title')
@@ -122,6 +121,51 @@ it('404: returns a page not found error when path is spelt wrong', () => {
 })
 
 })
+describe('GET /api/reviews/:review_id/comments', () => {
+    it('200: returns array of comments with correct properties for the given review_id', () => {
+        return request(app).get('/api/reviews/2/comments').expect(200)
+            .then((response) => {
+                const comments = response.body.comments
+                expect(Array.isArray(comments)).toBe(true);
+                comments.forEach(comment => {
+                    expect(comment).toHaveProperty('body');
+                    expect(comment).toHaveProperty('votes');
+                    expect(comment).toHaveProperty('author');
+                    expect(comment).toHaveProperty('review_id');
+                    expect(comment).toHaveProperty('created_at');
+                });
+            });
+    });
+
+    it('200: returns most recent comments first ', () => {
+        return request(app).get('/api/reviews/2/comments').expect(200)
+            .then((response) => {
+                const comments = response.body.comments;
+                expect(comments).toBeSortedBy('created_at', { descending: true });
+            });
+    });
+
+    it('400: returns "Bad request. Invalid ID" when id is in the wrong data type', () => {
+        return request(app).get('/api/reviews/invalid_id/comments').expect(400)
+            .then((response) => {
+                expect(response.body.message).toBe('Bad request. Invalid ID');
+            });
+    });
+
+    it('404: returns "Review ID not found" when id doesnt exist', () => {
+        return request(app).get('/api/reviews/999/comments').expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('Review ID not found');
+            });
+    });
+
+    it('404: returns page not found when path is spelt wrong', () => {
+        return request(app).get('/api/review/wrong_id/comments').expect(404)
+            .then((response) => {
+                expect(response.body.message).toBe('Page not found');
+            });
+    });
+});
 
 describe('PATCH /review/:reviewId', () => {
     it('200: returns the updated review with increased votes', () => {
@@ -288,6 +332,13 @@ describe('DELETE /api/comments/:comment_id', () => {
         .delete(`/api/comments/1`)
         .expect(204);
     });
+
+    it('204: responds with status 204 and no content', () => {
+        return request(app)
+          .delete(`/api/comments/1`)
+          .expect(204)
+          .expect('');
+      });
   
     it('400: returns "Bad request. Invalid comment ID" if comment_id is not a number', () => {
         return request(app)
@@ -298,12 +349,6 @@ describe('DELETE /api/comments/:comment_id', () => {
           });
       });
   
-    it('204: responds with status 204 and no content', () => {
-      return request(app)
-        .delete(`/api/comments/1`)
-        .expect(204)
-        .expect('');
-    });
   
     it('404: returns "Comment not found" when the comment ID does not exist', () => {
     

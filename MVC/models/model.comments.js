@@ -1,18 +1,19 @@
 const db = require("../.././db/connection");
 
 exports.selectCommentsUsingReviewId = (parsedReviewId) => {
-if (isNaN(parsedReviewId) || typeof parsedReviewId !== 'number') {
-return Promise.reject({ status: 400, message: 'Bad request. Invalid review_id' });
-}
+  if (isNaN(parsedReviewId) || typeof parsedReviewId !== 'number') {
+    return Promise.reject({ status: 400, message: 'Bad request. Invalid ID' });
+  }
 
-return db
-.query('SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;', [parsedReviewId])
-.then((result) => {
-return result.rows;
-})
- .catch((err) => {
-throw { status: 500, message: "Internal Server Error" };
-});
+  const queryStr = 'SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC;';
+
+  return db.query(queryStr, [parsedReviewId])
+    .then(result => {
+      return result.rows;
+    })
+    .catch(() => {
+      throw { status: 500, message: 'Internal Server Error' };
+    });
 };
 
 exports.insertComment = (commentData) => {

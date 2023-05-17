@@ -2,24 +2,19 @@ const { selectCommentsUsingReviewId, insertComment, deleteCommentUsingCommentId 
 const { checkIfReviewIdExists, checkIfUserExists, checkCommentIdExists } = require("./utils.js");
 
 exports.getCommentsByReviewId = (req, res, next) => {
-const { review_id } = req.params;
-const parsedReviewId = Number(review_id);
+  const { review_id } = req.params;
+  const parsedReviewId = Number(review_id);
   
 selectCommentsUsingReviewId(parsedReviewId)
-.then((comments) => {
-if (comments.length === 0) {
-return res.status(404).send({ message: 'No comments found for the given review_id' });
-}
+  .then((comments) => {
+    if (comments.length === 0) {
+return res.status(404).send({ message: 'Review ID not found' });
+    }
 res.status(200).send({ comments });
 })
-.catch((err) => {
-if (err.status && err.message) {
- return res.status(err.status).send({ message: err.message });
-} else {
- next(err);
+.catch(next)
 }
-});
-};
+
 
 exports.postComment = (req, res, next) => {
 const { review_id } = req.params;

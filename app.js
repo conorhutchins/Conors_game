@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const {getCategories, getApi} = require('./MVC/controllers/controller.categories')
 const { getReview, getAllReviews, patchReview } = require('./MVC/controllers/controller.reviews')
-const { postComment, deleteComment } = require('./MVC/controllers/controller.comments');
+const { postComment, deleteComment, getCommentsByReviewId } = require('./MVC/controllers/controller.comments');
 
 app.use(express.json());
 
@@ -11,6 +11,8 @@ app.get('/api/categories', getCategories)
 app.get("/api", getApi)
 
 app.get('/api/reviews/:review_id', getReview)
+
+app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
 
 app.get('/api/reviews', getAllReviews)
 
