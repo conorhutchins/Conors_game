@@ -35,6 +35,14 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
+    if (err.code === "22P02") {
+        res.status(400).send({message: "Bad request"})
+    } else {
+        next (err)
+    }
+})
+
+app.use((err, req, res, next) => {
     console.log("in the custom error handler", err);
     res.status(500).send({ message: 'Internal Server Error'});
 })

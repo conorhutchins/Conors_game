@@ -56,20 +56,12 @@ res.status(201).send({ comment });
 };
 
 exports.deleteComment = (req, res, next) => {
-    const { comment_id } = req.params;   
-    const parsedCommentId = Number(comment_id);
+  const { comment_id } = req.params; 
   
-    if (isNaN(parsedCommentId) || typeof parsedCommentId !== "number") {
-      return res.status(400).send({ message: "Bad request. Invalid comment ID" });
-    }
-  
-    checkCommentIdExists(parsedCommentId)
-      .then(() => {
-        deleteCommentUsingCommentId(parsedCommentId)
+    
+        deleteCommentUsingCommentId(comment_id)
           .then(() => {
-    res.status(204).send({ message: "" });
-          })
-      })
-      .catch(next)
+            res.status(204).send({})
+          }).catch(next)
       };
   

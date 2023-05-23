@@ -338,16 +338,16 @@ describe('DELETE /api/comments/:comment_id', () => {
           .delete(`/api/comments/1`)
           .expect(204)
           .expect('');
-      });
+    });
   
     it('400: returns "Bad request. Invalid comment ID" if comment_id is not a number', () => {
         return request(app)
           .delete(`/api/comments/invalid_id`)
           .expect(400)
           .then((response) => {
-            expect(response.body.message).toBe("Bad request. Invalid comment ID");
+            expect(response.body.message).toBe("Bad request");
           });
-      });
+    });
   
   
     it('404: returns "Comment not found" when the comment ID does not exist', () => {
@@ -355,8 +355,9 @@ describe('DELETE /api/comments/:comment_id', () => {
       return request(app)
         .delete(`/api/comments/999`)
         .expect(404)
-        .then((response) => {
+          .then((response) => {
+            console.log(response.body);
           expect(response.body.message).toBe('Comment ID not found');
         });
     });
-  })
+})
