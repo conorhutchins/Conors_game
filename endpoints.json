@@ -47,7 +47,7 @@
       }
     }
   },
-  "PATCH /review/:reviewId": {
+  "PATCH api/review/:reviewId": {
     "description": "serves the updated review with the votes changed",
     "requestBody": {
       "inc_votes": 1
