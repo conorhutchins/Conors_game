@@ -1,36 +1,57 @@
- # Conor's Board Games REST API
-https://conors-game.onrender.com
+# Conor's Board Games REST API
 
-# A personal project that works as the backend portion of a board games review site, written in Javascript
+[![Conor's Board Games](https://conors-game.onrender.com/favicon.ico)](https://conors-game.onrender.com)
 
-This project allows users to post reviews of games and comment on those reviews. Users can review games of different categories, comment on reviews, search for reviews, order their searches, delete comments, and vote on different comments and reviews.
+Welcome to my personal project, **Conor's Board Games REST API**. This project serves as the backend of a board games review site. It's written in Javascript and is equipped with features allowing users to post reviews of various games, comment on these reviews, and vote on comments/reviews.
 
-## How to install/ work on this project yourself
+## Key Features
 
-simply fork and/or clone it down on to your system from github using this command:
+- User reviews: Users can post reviews of board games across different categories.
+- Comments: Users can engage in discussions by commenting on game reviews.
+- Search and Sort: Provides functionality to search for reviews and order them.
+- Voting: Enables users to upvote or downvote reviews and comments.
+- Comment deletion: Users have the ability to delete comments.
 
-git clone https://github.com/GrowYourOwnFreedom/BE-NC-GAMES-JACK
+## Installation & Setup
 
-You will need to install dependencies using the following command:
+Follow the steps below to clone, install dependencies, and setup the database.
 
-npm init -y
+1. **Clone this repository**
 
-In order to seed yourself a dev database run the following commands:
+    ```bash
+    git clone https://github.com/conorhutchins/Conors_game
+    ```
 
-npm run setup-dbs
+2. **Install dependencies**
 
-npm run seed
+    ```bash
+    npm init -y
+    ```
 
-You will need to make sure you have created two .env files to work on this project:
+3. **Setup the database**
 
-.env.test and .env.development
+    ```bash
+    npm run setup-dbs
+    npm run seed
+    ```
 
-Into each, add PGDATABASE=<database_name_here>, with the correct database name for that environment either:
+4. **Create environment variables files**
 
-nc_games or nc_games_test
+You will need to create two .env files: `.env.test` and `.env.development`. Inside each file, add your PostgreSQL database name in the following format:
 
-Double check that these .env files are .gitignored.
+    ```bash
+    PGDATABASE=<database_name_here>
+    ```
 
-The required environment variables are set by passing dotenv a config object with the correct path, determined by the environment you are operating in at the time (eg. test or development). This is done in the connection file before the pool is exported.
+Use the correct database name for each environment: `nc_games` or `nc_games_test`. Make sure to add these .env files to your .gitignore.
 
-To run this code you will need to make sure to install the following applications: Node.js v19.7.0 psql 15.2
+Environment variables are set by passing dotenv a config object with the correct path, determined by your current working environment (eg. test or development). This is done in the connection file before the pool is exported.
+
+## Prerequisites
+
+Please ensure that you have the following applications installed on your system:
+
+- Node.js (v19.7.0)
+- PostgreSQL (psql 15.2)
+
+Now, you're all set to explore and work on **Conor's Board Games REST API**. Enjoy!
